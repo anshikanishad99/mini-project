@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block title %}Admin · HealthGuard AI{% endblock %}
+{% block content %}
+<h1 class="tech-title">College Health Dashboard</h1>
+<p class="tech-sub">Campus-wide wellness overview</p>
+<div class="stats">
+<div class="stat"><b>{{ stats.students }}</b><span>Registered students</span></div>
+<div class="stat"><b>{{ stats.checkups }}</b><span>Health check-ups</span></div>
+<div class="stat warn"><b>{{ stats.emergencies }}</b><span>Emergency detections</span></div>
+<div class="stat red"><b>{{ stats.alerts }}</b><span>SOS alerts sent</span></div></div>
+<div class="two">
+<div class="card"><h3>Predicted conditions (all check-ups)</h3>
+{% if counts %}{% set mx = counts.values()|max %}{% for k, v in counts.items()|sort(attribute='1', reverse=True) %}
+<div class="bar big"><i style="width:{{ (v / mx * 100)|round }}%"></i><span>{{ k }} · {{ v }}</span></div>{% endfor %}
+{% else %}<p class="muted-p">No check-ups yet.</p>{% endif %}</div>
+<div class="card"><h3>Students needing attention (latest check-up)</h3>
+<div class="scroll"><table><thead><tr><th>Student</th><th>Roll</th><th>Condition</th><th>Score</th><th>Status</th></tr></thead><tbody>
+{% for a in attention %}<tr><td>{{ a.name }}</td><td>{{ a.roll }}</td><td>{{ a.prediction }}</td><td>{{ a.score if a.score is not none else '-' }}</td>
+<td>{% if a.emergency %}<span class="badge error">🚨 Emergency</span>{% else %}<span class="badge warn">Follow up</span>{% endif %}</td></tr>
+{% else %}<tr><td colspan="5">Everyone is healthy 🎉</td></tr>{% endfor %}</tbody></table></div></div></div>
+<div class="card"><h3>Recent SOS alerts</h3>
+<div class="scroll"><table><thead><tr><th>Time</th><th>Student</th><th>Roll</th><th>Reason</th><th>Location</th><th>Delivery</th></tr></thead><tbody>
+{% for a in alerts %}<tr><td>{{ a.created }}</td><td>{{ a.student }}</td><td>{{ a.roll_no }}</td><td>{{ a.reason }}</td>
+<td>{% if a.lat is not none %}<a target="_blank" rel="noopener" href="https://maps.google.com/?q={{ a.lat }},{{ a.lng }}">map</a>{% else %}n/a{% endif %}</td>
+<td>{{ a.delivery }}</td></tr>{% else %}<tr><td colspan="6">No alerts</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

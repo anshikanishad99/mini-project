@@ -1,0 +1,37 @@
+{% extends "base.html" %}{% block title %}My Records · HealthGuard AI{% endblock %}
+{% block content %}
+<div class="card"><div class="rowbtw"><h2 style="margin:0">Health Record History</h2>
+<a class="btn ghost small" href="{{ url_for('export_records') }}">⬇ Download CSV</a></div>
+<canvas id="chart" height="110"></canvas>
+<div class="scroll"><table id="tbl"><thead><tr><th>Date</th><th>Prediction</th><th>Conf.</th><th>Score</th><th>BMI</th><th>Temp °F</th><th>HR</th><th>Sleep h</th><th>Water L</th><th>Stress</th><th>Emergency</th></tr></thead><tbody></tbody></table></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+// Small offline line chart (no external library - works without internet). Each series is scaled to its own max.
+function drawLines(cv, labels, series) {
+  const W = cv.width = cv.parentElement.clientWidth - 44, H = cv.height = 280, L = 38, B = 40, T = 30, R = 24, ctx = cv.getContext('2d');
+  const n = labels.length, x = i => L + (n < 2 ? (W - L - R) / 2 : i * (W - L - R) / (n - 1)), y = f => T + (1 - f) * (H - T - B);
+  ctx.font = '11px system-ui'; ctx.strokeStyle = '#e3ecea'; ctx.fillStyle = '#5b6b7b';
+  for (let g = 0; g <= 4; g++) { ctx.beginPath(); ctx.moveTo(L, y(g / 4)); ctx.lineTo(W - R, y(g / 4)); ctx.stroke(); ctx.fillText(g * 25 + '%', 2, y(g / 4) + 4); }
+  labels.forEach((t, i) => { if (n <= 8 || i % Math.ceil(n / 8) === 0) { ctx.save(); ctx.translate(x(i) - 14, H - B + 16); ctx.fillText(t, 0, 0); ctx.restore(); } });
+  series.forEach(([name, col, vals, max], k) => {
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = k ? 1.6 : 3; ctx.beginPath();
+    vals.forEach((v, i) => { const f = Math.min(1, (v ?? 0) / max); i ? ctx.lineTo(x(i), y(f)) : ctx.moveTo(x(i), y(f)); }); ctx.stroke();
+    vals.forEach((v, i) => { ctx.beginPath(); ctx.arc(x(i), y(Math.min(1, (v ?? 0) / max)), 3, 0, 7); ctx.fill(); });
+    ctx.fillRect(L + k * 130, 8, 12, 5); ctx.fillStyle = '#1f2d3d'; ctx.fillText(name, L + k * 130 + 17, 14);
+  });
+}
+fetch('/api/records').then(r => r.json()).then(rows => {
+  const tb = document.querySelector('#tbl tbody');
+  rows.slice().reverse().forEach(r => {
+    const tr = document.createElement('tr');
+    [r.created, r.prediction, r.confidence + '%', r.wellness_score ?? '-', r.bmi ?? '-', r.temperature, r.heart_rate ?? '-', r.sleep_hours, r.water_intake, r.stress_level, r.emergency ? '🚨 Yes' : 'No']
+      .forEach(v => { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
+    tb.appendChild(tr);
+  });
+  drawLines(document.getElementById('chart'), rows.map(r => r.created.slice(5, 10)), [
+    ['Wellness score', '#0f766e', rows.map(r => r.wellness_score), 100], ['Sleep (h)', '#7c3aed', rows.map(r => r.sleep_hours), 12],
+    ['Stress (1-10)', '#c0392b', rows.map(r => r.stress_level), 10], ['Water (L)', '#2563eb', rows.map(r => r.water_intake), 5]]);
+});
+</script>
+{% endblock %}

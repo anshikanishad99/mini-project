@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block title %}Register · HealthGuard AI{% endblock %}
+{% block content %}
+<div class="card"><h2>Step 1 · Student Registration</h2>
+<form method="post" class="grid">
+<label>Full name<input name="name" required></label>
+<label>Roll number<input name="roll_no" required></label>
+<label>Email<input type="email" name="email" required></label>
+<label>Password (min 6)<input type="password" name="password" minlength="6" required></label>
+<label>Age<input type="number" name="age" min="15" max="60"></label>
+<label>Height (cm)<input type="number" name="height" min="100" max="230" placeholder="e.g. 170" required></label>
+<label>Gender<select name="gender"><option>Male</option><option>Female</option><option>Other</option></select></label>
+<label>Blood group<select name="blood_group"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></label>
+<label>Allergies / conditions<input name="allergies" placeholder="e.g. penicillin, asthma"></label>
+<label>Guardian name<input name="guardian_name" required></label>
+<label>Guardian phone (with country code)<input name="guardian_phone" placeholder="+919876543210" required></label>
+<div class="full"><button class="btn">Register</button></div></form>
+<p>Already registered? <a href="{{ url_for('login') }}">Login</a></p></div>
+{% endblock %}

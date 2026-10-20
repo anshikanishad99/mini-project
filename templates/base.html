@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}HealthGuard AI{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body>
+<header><a class="brand" href="/">🛡️ HealthGuard AI</a>
+<nav>{% if session.uid %}
+<a href="{{ url_for('dashboard') }}">Check-up</a>{% if not first_time %}<a href="{{ url_for('records_page') }}">My Records</a>{% endif %}
+<a href="{{ url_for('technologies') }}">Technologies</a>{% if session.admin %}<a href="{{ url_for('admin') }}">Admin</a>{% endif %}
+<a href="{{ url_for('logout') }}">Logout ({{ session.name }})</a>
+{% else %}<a href="{{ url_for('technologies') }}">Technologies</a><a href="{{ url_for('login') }}">Login</a><a href="{{ url_for('register') }}">Register</a>{% endif %}</nav></header>
+<main>{% for m in get_flashed_messages() %}<div class="flash">{{ m }}</div>{% endfor %}
+{% block content %}{% endblock %}</main>
+<footer>Smart Student Wellness &amp; Emergency Platform · AI output is a screening aid, not a medical diagnosis. Emergency: 112 · Tele-MANAS: 14416</footer>
+{% block scripts %}{% endblock %}
+</body></html>

@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% block title %}HealthGuard AI · Smart Student Wellness &amp; Emergency Platform{% endblock %}
+{% block content %}
+<section class="hero">
+<h1>Your health, checked by AI.<br>Help, one tap away.</h1>
+<p>HealthGuard AI predicts common student health problems from your daily check-up, gives personalised advice,
+and sends an <b>SOS with your live location</b> to your guardian, college and nearby hospital when it detects an emergency.</p>
+<div class="cta">{% if session.uid %}<a class="btn" href="{{ url_for('dashboard') }}">Go to my check-up</a>
+{% else %}<a class="btn" href="{{ url_for('register') }}">Get started - Register</a><a class="btn ghost" href="{{ url_for('login') }}">Login</a>{% endif %}
+<a class="btn ghost" href="{{ url_for('technologies') }}">Technologies used</a></div>
+</section>
+<h2 class="sec">How it works</h2>
+<div class="steps">
+{% for n, t, d in [(1,'Register','Create your account with medical basics and a guardian phone number.'),
+ (2,'Health details','Fill in temperature, heart rate, sleep, water, stress and symptoms - nothing is assumed.'),
+ (3,'AI analysis','A Scikit-learn Random Forest predicts the most likely condition with a confidence score.'),
+ (4,'Recommendations','Get a wellness score, "why this result" factors and personalised diet, rest and care tips.'),
+ (5,'Emergency detection','Danger signs (very high fever, chest pain, abnormal heart rate…) are detected instantly.'),
+ (6,'SOS alert','A 10-second countdown, then SMS with live location goes to guardian, college and hospital.')] %}
+<div class="step"><span>{{ n }}</span><h3>{{ t }}</h3><p>{{ d }}</p></div>{% endfor %}
+</div>
+<h2 class="sec">Built with</h2>
+<p class="chips"><span>Python</span><span>Flask</span><span>Scikit-learn</span><span>MongoDB</span><span>Firebase Cloud</span><span>Google Maps API</span><span>Twilio SMS</span><span>HTML · CSS · JS</span></p>
+<p class="muted-p" style="text-align:center">HealthGuard AI is a screening aid, not a medical diagnosis. In an emergency call 112.</p>
+{% endblock %}

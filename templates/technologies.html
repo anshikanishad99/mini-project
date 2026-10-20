@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% block title %}Technologies Used · HealthGuard AI{% endblock %}
+{% block content %}
+<h1 class="tech-title">Technologies Used</h1>
+<p class="tech-sub">Tech Stack Powering the Platform · live status</p>
+<div class="tech-grid">
+{% for t in techs %}
+<div class="tech-card" id="t-{{ t.key }}">
+  <div class="tech-icon {{ 'red' if t.key == 'twilio' }}">{{ t.icon }}</div>
+  <div class="tech-cat">{{ t.cat }}</div>
+  <div class="tech-name">{{ t.name }}</div>
+  <span class="badge {{ t.state }}">{{ {'ok': '● Working', 'warn': '● Check', 'off': '● Not configured', 'error': '● Error'}[t.state] }}</span>
+  <p class="tech-detail">{{ t.detail }}</p>
+  {% if t.test and session.uid %}<button class="btn ghost small" data-test="{{ t.test }}">Run live test</button><div class="tech-result"></div>{% endif %}
+</div>
+{% endfor %}
+</div>
+{% if not session.uid %}<p class="muted-p">Log in to run the live Firebase and SMS tests.</p>{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll('[data-test]').forEach(b => b.addEventListener('click', async () => {
+  const out = b.nextElementSibling; b.disabled = true; out.textContent = 'Testing…';
+  try {
+    const r = await fetch(b.dataset.test, { method: 'POST' }); const j = await r.json();
+    out.textContent = (j.ok ? '✅ ' : '❌ ') + j.message;
+  } catch (e) { out.textContent = '❌ Request failed'; }
+  b.disabled = false;
+}));
+</script>
+{% endblock %}

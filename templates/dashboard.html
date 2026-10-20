@@ -1,0 +1,51 @@
+{% extends "base.html" %}{% block title %}Check-up · HealthGuard AI{% endblock %}
+{% block content %}
+<div class="two">
+<section class="card">
+{% if first_time %}
+<h2>Step 2 · Complete your health details</h2>
+<p class="muted-p">Welcome! Before we can predict anything, please fill in <b>all</b> the details below.
+Your result and health records will appear only after you submit them.</p>
+{% else %}
+<h2>Step 2 · New Health Check-up</h2>
+<p class="muted-p">Enter today's details. The prediction is based only on what you submit.</p>
+{% endif %}
+<div id="form-error" class="flash err" hidden></div>
+<form id="assess-form" class="grid" novalidate>
+<label>Body temperature (°F) *<input type="number" step="0.1" min="94" max="108" name="temperature" placeholder="e.g. 98.6" required></label>
+<label>Heart rate (bpm) *<input type="number" min="30" max="220" name="heart_rate" placeholder="e.g. 76" required></label>
+<label>Water intake today (L) *<input type="number" step="0.1" min="0" max="10" name="water_intake" placeholder="e.g. 2.0" required></label>
+<label>Sleep last night (hours) *<input type="number" step="0.5" min="0" max="24" name="sleep_hours" placeholder="e.g. 7" required></label>
+<label>Weight (kg) *<input type="number" step="0.1" min="20" max="250" name="weight" placeholder="e.g. 60" required></label>
+<label>Stress level (1 = calm, 10 = extreme) *<input type="number" min="1" max="10" name="stress_level" placeholder="1 - 10" required></label>
+<fieldset class="full"><legend>Symptoms (tick all that apply, leave blank if none)</legend>
+<label class="chk"><input type="checkbox" name="cough"> Cough</label>
+<label class="chk"><input type="checkbox" name="headache"> Headache</label>
+<label class="chk"><input type="checkbox" name="sore_throat"> Sore throat</label>
+<label class="chk"><input type="checkbox" name="body_ache"> Body ache</label>
+<label class="chk"><input type="checkbox" name="fatigue"> Fatigue</label>
+<label class="chk"><input type="checkbox" name="dizziness"> Dizziness</label>
+<label class="chk"><input type="checkbox" name="pale_skin"> Pale skin / weakness</label></fieldset>
+<fieldset class="full danger"><legend>Severe symptoms</legend>
+<label class="chk"><input type="checkbox" name="chest_pain"> Chest pain</label>
+<label class="chk"><input type="checkbox" name="breathing_difficulty"> Difficulty breathing</label>
+<label class="chk"><input type="checkbox" name="fainting"> Fainting</label>
+<label class="chk"><input type="checkbox" name="unsafe"> Feeling unsafe / thoughts of self-harm</label></fieldset>
+<div class="full"><button class="btn" id="submit-btn">{% if first_time %}Submit details &amp; get my prediction{% else %}Analyse my health{% endif %}</button></div>
+</form></section>
+
+<section>
+<div class="card" id="result" hidden></div>
+<div class="card" id="sos-box" hidden></div>
+<div class="card"><h2>🚨 Emergency &amp; Location</h2>
+<p id="loc">Detecting location…</p>
+<button class="btn red" id="sos-btn">Send SOS now</button>
+<a class="btn ghost" id="hosp-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/hospitals+near+me">Find nearby hospitals</a>
+<div id="map">{% if not maps_key %}<p class="muted">Add GOOGLE_MAPS_API_KEY in .env to show the live map.</p>{% endif %}</div>
+<ul id="hospitals"></ul></div>
+</section></div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% if maps_key %}<script async src="https://maps.googleapis.com/maps/api/js?key={{ maps_key }}&libraries=places&callback=initMap"></script>{% endif %}
+{% endblock %}

@@ -1,0 +1,10 @@
+Flask>=3.0
+pymongo>=4.6
+mongomock>=4.1
+scikit-learn>=1.4
+numpy
+pandas
+joblib
+python-dotenv
+twilio>=9.0
+firebase-admin>=6.4
