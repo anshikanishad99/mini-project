@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🛡️ HealthGuard AI – Smart Student Wellness & Emergency Platform
 
 An AI web app that predicts common student health problems from a daily check-up, explains the result, gives
@@ -88,3 +89,7 @@ Phone numbers must be international format (`+919876543210`).
 | Map is blank | add `GOOGLE_MAPS_API_KEY` |
 | SMS only in terminal | add Twilio keys (simulation mode is expected without them) |
 | Location unavailable | allow location in the browser (works on `localhost`; other hosts need HTTPS) |
+=======
+# mini-project
+my project - Healthguard AI
+>>>>>>> 2ef22698224ab6e1cc6dcd9bbc25daca7615c57b
